@@ -1,13 +1,24 @@
-﻿
-class Program
+﻿class Program
 {
     static void Main(string[] args)
     {
-        ProgramBase printer = new ProgramBase();
-        Thread thread = new Thread(printer.PrintNumbers);
-        thread.Start();
+        NumberPrinter numberPrinter = new NumberPrinter();
+        ProgramBase simplePrinter = new ProgramBase();
 
-        Console.WriteLine("Основной поток завершён.");
-        Console.ReadLine(); 
+        Thread thread1 = new Thread(new ThreadStart(numberPrinter.PrintEvenNumbers));
+        Thread thread2 = new Thread(new ThreadStart(numberPrinter.PrintOddNumbers));
+        Thread thread3 = new Thread(new ThreadStart(simplePrinter.PrintNumbers));
+
+        thread1.Start();
+        thread2.Start();
+        thread3.Start();
+
+        thread1.Join();
+        thread2.Join();
+        thread3.Join();
+
+
+        Console.WriteLine("Потоки запущены. Нажмите Enter для выхода.");
+        Console.ReadLine();
     }
 }
