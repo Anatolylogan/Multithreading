@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mutex", "Mutex\Mutex.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semaphore", "Semaphore\Semaphore.csproj", "{596B1D22-ED54-4EDF-ABEF-5BED262CAACC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelprogrammingandTPL", "ParallelprogrammingandTPL\ParallelprogrammingandTPL.csproj", "{0B488FE6-C317-4F8B-ACEE-B168F5636135}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{596B1D22-ED54-4EDF-ABEF-5BED262CAACC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{596B1D22-ED54-4EDF-ABEF-5BED262CAACC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{596B1D22-ED54-4EDF-ABEF-5BED262CAACC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B488FE6-C317-4F8B-ACEE-B168F5636135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B488FE6-C317-4F8B-ACEE-B168F5636135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B488FE6-C317-4F8B-ACEE-B168F5636135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B488FE6-C317-4F8B-ACEE-B168F5636135}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
