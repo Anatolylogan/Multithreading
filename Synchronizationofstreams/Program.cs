@@ -1,27 +1,18 @@
 ﻿class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        BankAccount account = new BankAccount(100);
+        BankAccount account = new BankAccount(150);
 
-        Thread user1 = new Thread(() => WithdrawMoney(account, 70));
-        Thread user2 = new Thread(() => WithdrawMoney(account, 50));
-        Thread user3 = new Thread(() => WithdrawMoney(account, 30));
+        Thread user1 = new Thread(() => account.Withdraw(70));
+        Thread user2 = new Thread(() => account.Withdraw(90));
 
         user1.Start();
         user2.Start();
-        user3.Start();
 
         user1.Join();
         user2.Join();
-        user3.Join();
 
-        Console.WriteLine($"Операции завершены. Ваш баланс: {account.Balance}");
-    }
-
-    static void WithdrawMoney(BankAccount account, int amount)
-    {
-        account.Withdraw(amount);
+        Console.WriteLine("Все операции завершены.");
     }
 }
-

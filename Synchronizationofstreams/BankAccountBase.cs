@@ -1,29 +1,35 @@
-﻿public class BankAccount
+﻿class BankAccount
 {
-    private object lockObj = new object();
-
-    public int Balance { get; private set; }
+    private object locker = new object();
+    private int balance;
 
     public BankAccount(int initialBalance)
     {
-        Balance = initialBalance;
+        balance = initialBalance;
     }
 
     public void Withdraw(int amount)
     {
-        lock (lockObj) 
+        bool lockTaken = false;
+        try
         {
-            Console.WriteLine($"Пользователь пытается снять {amount} . Текущий баланс: {Balance}");
-
-            if (Balance >= amount)
+            Monitor.Enter(locker, ref lockTaken); 
+            if (balance >= amount)
             {
-                Thread.Sleep(100);
-                Balance -= amount;
-                Console.WriteLine($"Успешно снято: {amount}. Остаток: {Balance}");
+                Console.WriteLine($"Снимаем {amount}...");
+                balance -= amount;
+                Console.WriteLine($"Операция успешно выполнена! Остаток: {balance}");
             }
             else
             {
-                Console.WriteLine($"Недостаточно средств для снятия {amount}. Остаток: {Balance}");
+                Console.WriteLine($"Недостаточно средств для снятия {amount}. Остаток: {balance}");
+            }
+        }
+        finally
+        {
+            if (lockTaken)
+            {
+                Monitor.Exit(locker); 
             }
         }
     }
