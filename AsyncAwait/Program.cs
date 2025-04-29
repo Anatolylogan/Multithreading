@@ -8,28 +8,34 @@
             "https://www.google.com"
         };
 
-        List<Task<int>> tasks = new List<Task<int>>();
+        List<Task<(string url, int length)>> tasks = new List<Task<(string, int)>>();
 
         foreach (var url in urls)
         {
             tasks.Add(GetPageLengthAsync(url));
         }
 
-        int[] results = await Task.WhenAll(tasks);
+        Task<(string url, int length)> firstFinished = await Task.WhenAny(tasks);
 
-        for (int i = 0; i < urls.Count; i++)
+        var fastestResult = await firstFinished;
+        Console.WriteLine($"Самая быстрая страница: {fastestResult.url}, длина HTML: {fastestResult.length}");
+
+        var allResults = await Task.WhenAll(tasks);
+
+        Console.WriteLine("Результаты всех запросов:");
+        foreach (var result in allResults)
         {
-            Console.WriteLine($"Сайт: {urls[i]}, длина HTML: {results[i]} символов");
+            Console.WriteLine($"Сайт: {result.url}, длина HTML: {result.length}");
         }
 
         Console.WriteLine("Нажмите Enter для выхода.");
         Console.ReadLine();
     }
 
-    static async Task<int> GetPageLengthAsync(string url)
+    static async Task<(string url, int length)> GetPageLengthAsync(string url)
     {
         using HttpClient client = new HttpClient();
         string html = await client.GetStringAsync(url);
-        return html.Length;
+        return (url, html.Length);
     }
 }
