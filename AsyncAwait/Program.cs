@@ -4,38 +4,48 @@
     {
         List<string> urls = new List<string>
         {
-            "https://www.microsoft.com",
+            "https://microsoft.com",
+            "https://this-url-does-not-exist.fake", 
             "https://www.google.com"
         };
 
-        List<Task<(string url, int length)>> tasks = new List<Task<(string, int)>>();
+        List<Task<(string url, int length, Exception error)>> tasks = new();
 
         foreach (var url in urls)
         {
-            tasks.Add(GetPageLengthAsync(url));
+            tasks.Add(GetPageLengthSafeAsync(url));
         }
 
-        Task<(string url, int length)> firstFinished = await Task.WhenAny(tasks);
+        var results = await Task.WhenAll(tasks);
 
-        var fastestResult = await firstFinished;
-        Console.WriteLine($"Самая быстрая страница: {fastestResult.url}, длина HTML: {fastestResult.length}");
-
-        var allResults = await Task.WhenAll(tasks);
-
-        Console.WriteLine("Результаты всех запросов:");
-        foreach (var result in allResults)
+        Console.WriteLine("Результаты:");
+        foreach (var result in results)
         {
-            Console.WriteLine($"Сайт: {result.url}, длина HTML: {result.length}");
+            if (result.error == null)
+            {
+                Console.WriteLine($"Успех: {result.url}, длина: {result.length}");
+            }
+            else
+            {
+                Console.WriteLine($"Ошибка при доступе к {result.url}: {result.error.Message}");
+            }
         }
 
-        Console.WriteLine("Нажмите Enter для выхода.");
+        Console.WriteLine("Готово. Нажмите Enter для выхода.");
         Console.ReadLine();
     }
-
-    static async Task<(string url, int length)> GetPageLengthAsync(string url)
+    static async Task<(string url, int length, Exception error)> GetPageLengthSafeAsync(string url)
     {
-        using HttpClient client = new HttpClient();
-        string html = await client.GetStringAsync(url);
-        return (url, html.Length);
+        try
+        {
+            using HttpClient client = new();
+            string html = await client.GetStringAsync(url);
+            return (url, html.Length, null);
+        }
+        catch (Exception ex)
+        {
+            return (url, 0, ex);
+        }
     }
 }
+
