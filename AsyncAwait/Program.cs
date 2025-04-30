@@ -2,50 +2,49 @@
 {
     static async Task Main()
     {
-        List<string> urls = new List<string>
+        List<string> urls = new()
         {
             "https://microsoft.com",
-            "https://this-url-does-not-exist.fake", 
+            "https://this-url-does-not-exist.fake",
             "https://www.google.com"
         };
 
-        List<Task<(string url, int length, Exception error)>> tasks = new();
-
+        List<Task<int>> tasks = new();
         foreach (var url in urls)
         {
-            tasks.Add(GetPageLengthSafeAsync(url));
+            tasks.Add(GetPageLengthAsync(url));
         }
 
-        var results = await Task.WhenAll(tasks);
-
-        Console.WriteLine("Результаты:");
-        foreach (var result in results)
-        {
-            if (result.error == null)
-            {
-                Console.WriteLine($"Успех: {result.url}, длина: {result.length}");
-            }
-            else
-            {
-                Console.WriteLine($"Ошибка при доступе к {result.url}: {result.error.Message}");
-            }
-        }
-
-        Console.WriteLine("Готово. Нажмите Enter для выхода.");
-        Console.ReadLine();
-    }
-    static async Task<(string url, int length, Exception error)> GetPageLengthSafeAsync(string url)
-    {
         try
         {
-            using HttpClient client = new();
-            string html = await client.GetStringAsync(url);
-            return (url, html.Length, null);
+            int[] lengths = await Task.WhenAll(tasks);
+
+            for (int i = 0; i < urls.Count; i++)
+            {
+                Console.WriteLine($"{urls[i]}: длина = {lengths[i]}");
+            }
         }
         catch (Exception ex)
         {
-            return (url, 0, ex);
+            Console.WriteLine($"Произошла ошибка при загрузке страниц: {ex.Message}");
+
+            if (ex is AggregateException aggEx)
+            {
+                foreach (var inner in aggEx.InnerExceptions)
+                {
+                    Console.WriteLine($"   ▶ {inner.GetType().Name}: {inner.Message}");
+                }
+            }
         }
+
+        Console.WriteLine("Завершено. Нажмите Enter.");
+        Console.ReadLine();
+    }
+    static async Task<int> GetPageLengthAsync(string url)
+    {
+        using HttpClient client = new();
+        string html = await client.GetStringAsync(url); 
+        return html.Length;
     }
 }
 
